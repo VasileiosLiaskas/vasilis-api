@@ -2,14 +2,16 @@ package vasilis.vasilis.business;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import vasilis.vasilis.business.DTO.BusinessArgsDTO;
 import vasilis.vasilis.business.DTO.BusinessDTO;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 public interface BusinessService {
 
-    Page<BusinessDTO> getList(int page, int size);
+    Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo);
 
     boolean deleteBusinessById(Integer id);
 
@@ -22,4 +24,6 @@ public interface BusinessService {
     List<BusinessDTO> toDTOList(List<Business> businessList);
 
     List<Business> toEntityList(List<BusinessDTO> businessDTOList);
+
+//    List<BusinessDTO> searchBusiness(BusinessArgsDTO businessArgsDTO);
 }

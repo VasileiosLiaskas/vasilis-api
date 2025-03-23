@@ -13,7 +13,7 @@ import java.util.Date;
 public class BusinessDTO {
 
     private Integer id;
-//    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date date;
     private String type;
@@ -28,6 +28,18 @@ public class BusinessDTO {
     private Boolean filesDelivered;
     private String comments;
 
+    public BusinessDTO() {
+    }
+
+    public BusinessDTO(Integer id, String type, String who, String area, String details,Date date, String comments) {
+        this.id = id;
+        this.type = type;
+        this.who = who;
+        this.area = area;
+        this.details = details;
+        this.date = date;
+        this.comments = comments;
+    }
 
     public Integer getId() {
         return id;

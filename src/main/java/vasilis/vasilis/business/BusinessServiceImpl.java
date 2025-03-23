@@ -1,5 +1,6 @@
 package vasilis.vasilis.business;
 
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,23 +9,39 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import vasilis.vasilis.business.DTO.BusinessArgsDTO;
 import vasilis.vasilis.business.DTO.BusinessDTO;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static org.apache.tomcat.util.http.FastHttpDateFormat.parseDate;
 
 @Service
 public class BusinessServiceImpl implements  BusinessService {
 
     @Autowired
     private BusinessRepository businessRepository;
+    @Autowired
+    private BusinessRepositoryCustom businessRepositoryCustom;
 
 
-    public Page<BusinessDTO> getList(int page, int size) {
+    public Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo) {
         Pageable pageable = PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "date"));
-        Page<Business> businessPage = businessRepository.findAll(pageable);
-        return businessPage.map(this::toDTO);
+        if ((keyword == null || keyword.trim().isEmpty())&&(dateFrom == null || dateTo == null )) {
+            // If keyword is empty or null, use the simple findAll with pagination and sorting
+            Page<Business> businessPage = businessRepository.findAll(pageable);
+            return businessPage.map(this::toDTO); // Map to DTOs
+        } else {
+            Date fromDate = parseDate(dateFrom);
+            Date toDate = parseDate(dateTo);
+            return searchBusinessByKeyword(page, size, keyword,fromDate, toDate);
+        }
     }
 
     @Override
@@ -105,5 +122,20 @@ public class BusinessServiceImpl implements  BusinessService {
         }
 
         return businessList;
+    }
+
+    private Date parseDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null; // Return null if date is missing
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return formatter.parse(dateStr);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Expected format: YYYY-MM-DD", e);
+        }
+    }
+    private Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo) {
+        return businessRepositoryCustom.searchBusinessByKeyword(page, size, keyword, dateFrom, dateTo);
     }
 }

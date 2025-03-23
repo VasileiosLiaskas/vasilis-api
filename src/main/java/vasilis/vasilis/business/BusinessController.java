@@ -5,8 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vasilis.vasilis.business.DTO.BusinessArgsDTO;
 import vasilis.vasilis.business.DTO.BusinessDTO;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,8 +34,11 @@ public class BusinessController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Page<BusinessDTO> getList(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return businessService.getList(page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String dateFrom,
+            @RequestParam(required = false) String dateTo) {
+        return businessService.getList(page, size,keyword, dateFrom, dateTo);
     }
 
     @DeleteMapping(value = "/delete")
@@ -45,5 +50,10 @@ public class BusinessController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Business not found.");
         }
     }
+
+//    @GetMapping(value = "search-for-args")
+//    public List<BusinessDTO> searchBusiness(@RequestBody BusinessArgsDTO businessArgsDTO){
+//        return businessService.searchBusiness(businessArgsDTO);
+//    }
 
 }
