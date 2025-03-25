@@ -24,8 +24,10 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
 
     @Override
     public Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo) {
-        StringBuilder hql = new StringBuilder("SELECT new vasilis.vasilis.business.DTO.BusinessDTO(b.id, b.type, b.who, b.area, b.details, b.date, b.comments) ")
-                .append("FROM Business b WHERE 1=1 ");
+        StringBuilder hql = new StringBuilder("SELECT new vasilis.vasilis.business.DTO.BusinessDTO("
+                + "b.id, b.type, b.who, b.area, b.details, b.date, b.comments, "
+                + "b.fee, b.advancePayment, b.remainingMoney, b.payout, b.filesCompleted, b.filesDelivered, b.costs) "
+                + "FROM Business b WHERE 1=1 ");
 
         List<Object> params = new ArrayList<>();
         int paramIndex = 1;
@@ -70,8 +72,39 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
 
         List<BusinessDTO> results = query.getResultList();
         long total = getTotalCount(keyword, dateFrom, dateTo);
+        Double totalIncome = getTotalIncome(dateFrom, dateTo);
+
+        for (BusinessDTO dto : results) {
+            dto.setTotalIncome(totalIncome);
+        }
 
         return new PageImpl<>(results, PageRequest.of(page, size), total);
+    }
+    public Double getTotalIncome(Date dateFrom, Date dateTo) {
+        StringBuilder hql = new StringBuilder("SELECT SUM(b.fee) FROM Business b WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+        int paramIndex = 1;
+
+        // Default: Sum fees of the current month
+        if (dateFrom == null && dateTo == null) {
+            hql.append("AND MONTH(b.date) = MONTH(CURRENT_DATE) AND YEAR(b.date) = YEAR(CURRENT_DATE) ");
+        } else {
+            if (dateFrom != null) {
+                hql.append("AND b.date >= ?").append(paramIndex).append(" ");
+                params.add(dateFrom);
+                paramIndex++;
+            }
+            if (dateTo != null) {
+                hql.append("AND b.date <= ?").append(paramIndex).append(" ");
+                params.add(dateTo);
+            }
+        }
+
+        TypedQuery<Double> query = entityManager.createQuery(hql.toString(), Double.class);
+        setQueryParameters(query, params);
+
+        Double result = query.getSingleResult();
+        return result != null ? result : 0.0;  // Return 0 if no data found
     }
 
     private long getTotalCount(String keyword, Date dateFrom, Date dateTo) {
@@ -118,5 +151,15 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
                 query.setParameter(i + 1, param);
             }
         }
+    }
+
+    @Override
+    public Double getTotalIncomeForCurrentMonth() {
+        String hql = "SELECT SUM(b.fee) FROM Business b WHERE MONTH(b.date) = MONTH(CURRENT_DATE) AND YEAR(b.date) = YEAR(CURRENT_DATE)";
+
+        TypedQuery<Double> query = entityManager.createQuery(hql, Double.class);
+        Double result = query.getSingleResult();
+
+        return result != null ? result : 0.0;  // Return 0 if no data
     }
 }

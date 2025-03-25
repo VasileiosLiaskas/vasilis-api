@@ -13,4 +13,6 @@ public interface BusinessRepositoryCustom {
 
 //    List<BusinessDTO> searchBusiness(BusinessArgsDTO businessArgsDTO);
     Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo);
+    Double getTotalIncome(Date dateFrom, Date dateTo);
+    Double getTotalIncomeForCurrentMonth();
 }

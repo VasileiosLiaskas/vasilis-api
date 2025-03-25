@@ -36,12 +36,24 @@ public class BusinessServiceImpl implements  BusinessService {
         if ((keyword == null || keyword.trim().isEmpty())&&(dateFrom == null || dateTo == null )) {
             // If keyword is empty or null, use the simple findAll with pagination and sorting
             Page<Business> businessPage = businessRepository.findAll(pageable);
-            return businessPage.map(this::toDTO); // Map to DTOs
+            Page<BusinessDTO> dtoPage = businessPage.map(this::toDTO);
+
+            // Calculate totalIncome for current month
+            Double totalIncome = getTotalIncomeForCurrentMonth();
+
+            // Set totalIncome in each DTO
+            dtoPage.forEach(dto -> dto.setTotalIncome(totalIncome));
+
+            return dtoPage;
         } else {
             Date fromDate = parseDate(dateFrom);
             Date toDate = parseDate(dateTo);
             return searchBusinessByKeyword(page, size, keyword,fromDate, toDate);
         }
+    }
+
+    private Double getTotalIncomeForCurrentMonth() {
+        return businessRepository.getTotalIncomeForCurrentMonth();
     }
 
     @Override

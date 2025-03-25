@@ -21,17 +21,22 @@ public class BusinessDTO {
     private String area;
     private String details;
     private Double fee;
+    private Double costs;
     private Double advancePayment;
     private Double remainingMoney;
     private Boolean payout;
     private Boolean filesCompleted;
     private Boolean filesDelivered;
     private String comments;
+    private Double totalIncome;
 
     public BusinessDTO() {
     }
 
-    public BusinessDTO(Integer id, String type, String who, String area, String details,Date date, String comments) {
+    public BusinessDTO(Integer id, String type, String who, String area,
+                       String details, Date date, String comments,
+                       Double fee, Double advancePayment, Double remainingMoney,
+                       Boolean payout, Boolean filesCompleted, Boolean filesDelivered, Double costs) {
         this.id = id;
         this.type = type;
         this.who = who;
@@ -39,6 +44,13 @@ public class BusinessDTO {
         this.details = details;
         this.date = date;
         this.comments = comments;
+        this.fee = fee;
+        this.advancePayment = advancePayment;
+        this.remainingMoney = remainingMoney;
+        this.payout = payout;
+        this.filesCompleted = filesCompleted;
+        this.filesDelivered = filesDelivered;
+        this.costs=costs;
     }
 
     public Integer getId() {
@@ -133,6 +145,14 @@ public class BusinessDTO {
         return filesDelivered;
     }
 
+    public Double getCosts() {
+        return costs;
+    }
+
+    public void setCosts(Double costs) {
+        this.costs = costs;
+    }
+
     public void setFilesDelivered(Boolean filesDelivered) {
         this.filesDelivered = filesDelivered;
     }
@@ -143,5 +163,13 @@ public class BusinessDTO {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Double getTotalIncome() {
+        return totalIncome;
+    }
+
+    public void setTotalIncome(Double totalIncome) {
+        this.totalIncome = totalIncome;
     }
 }
