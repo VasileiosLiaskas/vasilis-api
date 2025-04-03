@@ -1,6 +1,7 @@
 package vasilis.vasilis.business;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import vasilis.vasilis.business.DTO.BusinessArgsDTO;
 import vasilis.vasilis.business.DTO.BusinessDTO;
@@ -24,6 +25,8 @@ public interface BusinessService {
     List<BusinessDTO> toDTOList(List<Business> businessList);
 
     List<Business> toEntityList(List<BusinessDTO> businessDTOList);
+
+    ResponseEntity<byte[]> export();
 
 //    List<BusinessDTO> searchBusiness(BusinessArgsDTO businessArgsDTO);
 }

@@ -2,23 +2,34 @@ package vasilis.vasilis.business;
 
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import vasilis.vasilis.business.DTO.BusinessArgsDTO;
 import vasilis.vasilis.business.DTO.BusinessDTO;
+import vasilis.vasilis.general.TranslationUtil;
 
+import java.time.ZoneId;
+import java.util.Date;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.tomcat.util.http.FastHttpDateFormat.parseDate;
 
@@ -59,18 +70,11 @@ public class BusinessServiceImpl implements  BusinessService {
     @Override
     @Transactional
     public boolean deleteBusinessById(Integer id) {
-        boolean deleted = false;
         businessRepository.deleteById(id);
         // Check if the business exists first
         Optional<Business> business = businessRepository.findById(id);
 
-        if (business.isPresent()) {
-            // If the business exists, delete it
-            businessRepository.deleteById(id);
-            deleted = true;
-        }
-
-        return deleted;
+        return business.isEmpty();
 
     }
 
@@ -150,4 +154,61 @@ public class BusinessServiceImpl implements  BusinessService {
     private Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo) {
         return businessRepositoryCustom.searchBusinessByKeyword(page, size, keyword, dateFrom, dateTo);
     }
+
+    @Override
+    public ResponseEntity<byte[]> export() {
+        List<BusinessDTO> businessList = toDTOList(businessRepository.findAll()); // Assuming it fetches all data
+        Map<String, List<BusinessDTO>> groupedByMonth = businessList.stream()
+                .collect(Collectors.groupingBy(b -> getMonthYear(b.getDate())));
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            for (String month : groupedByMonth.keySet()) {
+                Sheet sheet = workbook.createSheet(month);
+                createHeaderRow(sheet);
+                fillDataRows(sheet, groupedByMonth.get(month));
+            }
+
+            workbook.write(out);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=Business_Report.xlsx");
+            return ResponseEntity.ok().headers(headers).body(out.toByteArray());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    private String getMonthYear(Date date) {
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return localDate.getMonth().toString() + "_" + localDate.getYear();
+    }
+
+    private void createHeaderRow(Sheet sheet) {
+        Row header = sheet.createRow(0);
+        String[] columns = {"ID", "Date", "Type", "Who", "Area", "Details", "Fee", "Advance Payment", "Remaining Money", "Costs", "Payout", "Files Completed", "Files Delivered", "Comments"};
+        for (int i = 0; i < columns.length; i++) {
+            header.createCell(i).setCellValue(TranslationUtil.getTranslation(columns[i]));
+        }
+    }
+
+    private void fillDataRows(Sheet sheet, List<BusinessDTO> data) {
+        int rowNum = 1;
+        for (BusinessDTO business : data) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(business.getId() != null ? business.getId() : 0);
+            row.createCell(1).setCellValue(business.getDate() != null ? business.getDate().toString() : "");
+            row.createCell(2).setCellValue(business.getType() != null ? business.getType() : "");
+            row.createCell(3).setCellValue(business.getWho() != null ? business.getWho() : "");
+            row.createCell(4).setCellValue(business.getArea() != null ? business.getArea() : "");
+            row.createCell(5).setCellValue(business.getDetails() != null ? business.getDetails() : "");
+            row.createCell(6).setCellValue(business.getFee() != null ? business.getFee() : 0.0);
+            row.createCell(7).setCellValue(business.getAdvancePayment() != null ? business.getAdvancePayment() : 0.0);
+            row.createCell(8).setCellValue(business.getRemainingMoney() != null ? business.getRemainingMoney() : 0.0);
+            row.createCell(9).setCellValue(business.getCosts() != null ? business.getCosts() : 0.0);
+            row.createCell(10).setCellValue(business.getPayout() != null ? business.getPayout() : false);
+            row.createCell(11).setCellValue(business.getFilesCompleted() != null ? business.getFilesCompleted() : false);
+            row.createCell(12).setCellValue(business.getFilesDelivered() != null ? business.getFilesDelivered() : false);
+            row.createCell(13).setCellValue(business.getComments() != null ? business.getComments() : "");
+        }
+    }
+
 }

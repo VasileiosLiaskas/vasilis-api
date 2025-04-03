@@ -41,14 +41,19 @@ public class BusinessController {
         return businessService.getList(page, size,keyword, dateFrom, dateTo);
     }
 
-    @DeleteMapping(value = "/delete")
-    public ResponseEntity<String> deleteBusiness(@PathVariable Integer id) {
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<Void> deleteBusiness(@PathVariable Integer id) {
         boolean deleted = businessService.deleteBusinessById(id);
         if (deleted) {
-            return ResponseEntity.ok("Business deleted successfully.");
+            return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Business not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @GetMapping (value ="/export")
+    public ResponseEntity<byte[]> exportBusiness() {
+        return businessService.export();
     }
 
 //    @GetMapping(value = "search-for-args")
