@@ -42,9 +42,11 @@ public class BusinessServiceImpl implements  BusinessService {
     private BusinessRepositoryCustom businessRepositoryCustom;
 
 
-    public Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo) {
+    public Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo,
+                                     Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout) {
         Pageable pageable = PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "date"));
-        if ((keyword == null || keyword.trim().isEmpty())&&(dateFrom == null || dateTo == null )) {
+        if ((keyword == null || keyword.trim().isEmpty())&&(dateFrom == null || dateTo == null )
+                && filterFilesDelivered == null && filterFilesCompleted == null && filterPayout == null ) {
             // If keyword is empty or null, use the simple findAll with pagination and sorting
             Page<Business> businessPage = businessRepository.findAll(pageable);
             Page<BusinessDTO> dtoPage = businessPage.map(this::toDTO);
@@ -59,7 +61,7 @@ public class BusinessServiceImpl implements  BusinessService {
         } else {
             Date fromDate = parseDate(dateFrom);
             Date toDate = parseDate(dateTo);
-            return searchBusinessByKeyword(page, size, keyword,fromDate, toDate);
+            return searchBusinessByKeyword(page, size, keyword,fromDate, toDate,filterFilesDelivered, filterFilesCompleted, filterPayout);
         }
     }
 
@@ -151,8 +153,8 @@ public class BusinessServiceImpl implements  BusinessService {
             throw new IllegalArgumentException("Invalid date format. Expected format: YYYY-MM-DD", e);
         }
     }
-    private Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo) {
-        return businessRepositoryCustom.searchBusinessByKeyword(page, size, keyword, dateFrom, dateTo);
+    private Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo,  Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout) {
+        return businessRepositoryCustom.searchBusinessByKeyword(page, size, keyword, dateFrom, dateTo,filterFilesDelivered, filterFilesCompleted, filterPayout);
     }
 
     @Override

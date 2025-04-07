@@ -12,7 +12,7 @@ import java.util.List;
 public interface BusinessRepositoryCustom {
 
 //    List<BusinessDTO> searchBusiness(BusinessArgsDTO businessArgsDTO);
-    Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo);
+    Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo, Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout);
     Double getTotalIncome(Date dateFrom, Date dateTo);
     Double getTotalIncomeForCurrentMonth();
 }

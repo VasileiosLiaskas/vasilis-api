@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public interface BusinessService {
 
-    Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo);
+    Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo,  Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout);
 
     boolean deleteBusinessById(Integer id);
 

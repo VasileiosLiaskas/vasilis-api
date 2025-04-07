@@ -23,7 +23,7 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo) {
+    public Page<BusinessDTO> searchBusinessByKeyword(int page, int size, String keyword, Date dateFrom, Date dateTo,  Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout) {
         StringBuilder hql = new StringBuilder("SELECT new vasilis.vasilis.business.DTO.BusinessDTO("
                 + "b.id, b.type, b.who, b.area, b.details, b.date, b.comments, "
                 + "b.fee, b.advancePayment, b.remainingMoney, b.payout, b.filesCompleted, b.filesDelivered, b.costs) "
@@ -46,7 +46,6 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
             paramIndex += 5;
         }
 
-        // Add condition for date range
         if (dateFrom != null) {
             hql.append("AND b.date >= ?").append(paramIndex).append(" ");
             params.add(dateFrom);
@@ -55,23 +54,44 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
         if (dateTo != null) {
             hql.append("AND b.date <= ?").append(paramIndex).append(" ");
             params.add(dateTo);
+            paramIndex++;
         }
 
-        // Add pagination
+        // filesDelivered filter
+        if (filterFilesDelivered != null) {
+            hql.append("AND b.filesDelivered = ?").append(paramIndex).append(" ");
+            params.add(filterFilesDelivered);
+            paramIndex++;
+        }
+
+        // filesCompleted filter
+        if (filterFilesCompleted != null) {
+            hql.append("AND b.filesCompleted = ?").append(paramIndex).append(" ");
+            params.add(filterFilesCompleted);
+            paramIndex++;
+        }
+
+        // payout filter
+        if (filterPayout != null) {
+            hql.append("AND b.payout = ?").append(paramIndex).append(" ");
+            params.add(filterPayout);
+        }
+
+        // Sorting
         hql.append("ORDER BY b.date DESC");
 
-        // Create TypedQuery
+        // Create query
         TypedQuery<BusinessDTO> query = entityManager.createQuery(hql.toString(), BusinessDTO.class);
 
-        // Set parameters dynamically
+        // Set dynamic parameters
         setQueryParameters(query, params);
 
         // Set pagination
         query.setFirstResult(page * size);
         query.setMaxResults(size);
-
+        System.out.println("filterFilesDelivered: " + filterFilesDelivered);
         List<BusinessDTO> results = query.getResultList();
-        long total = getTotalCount(keyword, dateFrom, dateTo);
+        long total = getTotalCount(keyword, dateFrom, dateTo, filterFilesDelivered, filterFilesCompleted, filterPayout);
         Double totalIncome = getTotalIncome(dateFrom, dateTo);
 
         for (BusinessDTO dto : results) {
@@ -107,7 +127,7 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
         return result != null ? result : 0.0;  // Return 0 if no data found
     }
 
-    private long getTotalCount(String keyword, Date dateFrom, Date dateTo) {
+    private long getTotalCount(String keyword, Date dateFrom, Date dateTo, Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout) {
         StringBuilder hql = new StringBuilder("SELECT COUNT(b) FROM Business b WHERE 1=1 ");
         List<Object> params = new ArrayList<>();
         int paramIndex = 1;
@@ -134,11 +154,34 @@ public class BusinessRepositoryImpl implements BusinessRepositoryCustom {
         if (dateTo != null) {
             hql.append("AND b.date <= ?").append(paramIndex).append(" ");
             params.add(dateTo);
+            paramIndex++;
         }
+
+        // Add filter for filesDelivered
+        if (filterFilesDelivered != null) {
+            hql.append("AND b.filesDelivered = ?").append(paramIndex).append(" ");
+            params.add(filterFilesDelivered);
+            paramIndex++;
+        }
+
+        // Add filter for filesCompleted
+        if (filterFilesCompleted != null) {
+            hql.append("AND b.filesCompleted = ?").append(paramIndex).append(" ");
+            params.add(filterFilesCompleted);
+            paramIndex++;
+        }
+
+        // Add filter for payout (boolean check)
+        if (filterPayout != null) {
+            hql.append("AND b.payout = ?").append(paramIndex).append(" ");
+            params.add(filterPayout);
+        }
+
+
+
 
         TypedQuery<Long> query = entityManager.createQuery(hql.toString(), Long.class);
         setQueryParameters(query, params);
-
         return query.getSingleResult();
     }
 
