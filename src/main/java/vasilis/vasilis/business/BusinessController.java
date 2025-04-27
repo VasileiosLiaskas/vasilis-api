@@ -60,9 +60,5 @@ public class BusinessController {
         return businessService.export();
     }
 
-//    @GetMapping(value = "search-for-args")
-//    public List<BusinessDTO> searchBusiness(@RequestBody BusinessArgsDTO businessArgsDTO){
-//        return businessService.searchBusiness(businessArgsDTO);
-//    }
 
 }
