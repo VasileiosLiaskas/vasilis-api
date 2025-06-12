@@ -125,13 +125,6 @@ public class BusinessDTO {
         this.remainingMoney = remainingMoney;
     }
 
-    public Boolean getPayout() {
-        return payout;
-    }
-
-    public void setPayout(Boolean payout) {
-        this.payout = payout;
-    }
 
     public Boolean getFilesCompleted() {
         return filesCompleted;
@@ -171,5 +164,13 @@ public class BusinessDTO {
 
     public void setTotalIncome(Double totalIncome) {
         this.totalIncome = totalIncome;
+    }
+
+    public Boolean getPayout() {
+        return payout;
+    }
+
+    public void setPayout(Boolean payout) {
+        this.payout = payout;
     }
 }
