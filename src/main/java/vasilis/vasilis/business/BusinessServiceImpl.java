@@ -51,6 +51,7 @@ public class BusinessServiceImpl implements  BusinessService {
             Page<Business> businessPage = businessRepository.findAll(pageable);
             Page<BusinessDTO> dtoPage = businessPage.map(this::toDTO);
 
+            Long totalRecords = businessPage.getTotalElements();
             // Calculate totalIncome for current month
             Double totalIncome = getTotalIncomeForCurrentMonth();
 

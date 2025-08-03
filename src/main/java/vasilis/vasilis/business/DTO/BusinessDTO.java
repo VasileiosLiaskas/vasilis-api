@@ -29,6 +29,7 @@ public class BusinessDTO {
     private Boolean filesDelivered;
     private String comments;
     private Double totalIncome;
+    private Long totalRecords;
 
     public BusinessDTO() {
     }
@@ -172,5 +173,13 @@ public class BusinessDTO {
 
     public void setPayout(Boolean payout) {
         this.payout = payout;
+    }
+
+    public Long getTotalRecords() {
+        return totalRecords;
+    }
+
+    public void setTotalRecords(Long totalRecords) {
+        this.totalRecords = totalRecords;
     }
 }
