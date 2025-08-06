@@ -2,6 +2,11 @@ package vasilis.vasilis.user;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,19 +16,26 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    private JWTService jwtService;
 
-    @Override
-    public Optional<User> findByEmail(String email) {
-        return Optional.empty();
-    }
 
     @Override
     public Optional<User> findByUsername(String username) {
-//        Optional<User> user = userRepository.findByUsername(username);
-//        if (user.isPresent()) {
-//            return user.get()
-//        }
-        return Optional.empty();
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public String verify(User user) {
+        Authentication authentication=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+
+        if (authentication.isAuthenticated()){
+            return jwtService.generateToken(user.getUsername());
+            
+        }
+        return "login unsuccessful";
     }
 
 
