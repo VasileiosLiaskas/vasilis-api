@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -29,14 +29,15 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public String verify(User user) {
-        Authentication authentication=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+        );
 
-        if (authentication.isAuthenticated()){
+        if (authentication.isAuthenticated()) {
             return jwtService.generateToken(user.getUsername());
-            
         }
-        return "login unsuccessful";
+        throw new RuntimeException("Authentication failed");
+
+
     }
-
-
 }

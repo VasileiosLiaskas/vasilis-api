@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vasilis.vasilis.general.CustomDateDeserializer;
 import vasilis.vasilis.general.CustomDateSerializer;
+import vasilis.vasilis.invoice.DTO.InvoiceDTO;
 
 import java.util.Date;
+import java.util.List;
 
 public class BusinessDTO {
 
@@ -30,6 +32,7 @@ public class BusinessDTO {
     private String comments;
     private Double totalIncome;
     private Long totalRecords;
+    private List<InvoiceDTO> invoices;
 
     public BusinessDTO() {
     }
@@ -181,5 +184,13 @@ public class BusinessDTO {
 
     public void setTotalRecords(Long totalRecords) {
         this.totalRecords = totalRecords;
+    }
+
+    public List<InvoiceDTO> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(List<InvoiceDTO> invoices) {
+        this.invoices = invoices;
     }
 }

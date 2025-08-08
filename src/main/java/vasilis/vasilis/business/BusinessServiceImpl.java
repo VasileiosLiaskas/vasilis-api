@@ -1,6 +1,5 @@
 package vasilis.vasilis.business;
 
-import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.poi.ss.usermodel.Row;
@@ -9,6 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +17,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import vasilis.vasilis.business.DTO.BusinessArgsDTO;
 import vasilis.vasilis.business.DTO.BusinessDTO;
 import vasilis.vasilis.general.TranslationUtil;
+import vasilis.vasilis.invoice.DTO.InvoiceDTO;
+import vasilis.vasilis.invoice.Invoice;
+import vasilis.vasilis.invoice.InvoiceService;
+import vasilis.vasilis.invoice.InvoiceServiceImpl;
 
 import java.time.ZoneId;
 import java.util.Date;
@@ -31,8 +34,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.apache.tomcat.util.http.FastHttpDateFormat.parseDate;
-
 @Service
 public class BusinessServiceImpl implements  BusinessService {
 
@@ -40,7 +41,15 @@ public class BusinessServiceImpl implements  BusinessService {
     private BusinessRepository businessRepository;
     @Autowired
     private BusinessRepositoryCustom businessRepositoryCustom;
+    @Autowired
+    @Lazy
+    private InvoiceService invoiceService;
 
+
+    @Override
+    public Optional<Business> findById(Integer id) {
+        return businessRepository.findById(id);
+    }
 
     public Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo,
                                      Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout) {
@@ -98,6 +107,7 @@ public class BusinessServiceImpl implements  BusinessService {
         // Use BeanUtils to copy properties from BusinessDTO to Business
         BeanUtils.copyProperties(businessDTO, business);
 
+
         return business;
     }
 
@@ -111,10 +121,19 @@ public class BusinessServiceImpl implements  BusinessService {
 
         // Use BeanUtils to copy properties from Business to BusinessDTO
         BeanUtils.copyProperties(business, businessDTO);
+        if (business.getInvoices() != null) {
+            List<InvoiceDTO> invoiceDTOs = business.getInvoices().stream()
+                    .map(this::convertInvoiceToDTO)
+                    .collect(Collectors.toList());
+            businessDTO.setInvoices(invoiceDTOs);
+        }
 
         return businessDTO;
     }
+    private InvoiceDTO convertInvoiceToDTO(Invoice invoice) {
 
+        return invoiceService.toDTO(invoice);
+    }
     @Override
     public List<BusinessDTO> toDTOList(List<Business> businessList) {
         if (businessList == null) {
@@ -180,6 +199,12 @@ public class BusinessServiceImpl implements  BusinessService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @Override
+    public Business getById(Integer businessId) {
+        return businessRepository.getById(businessId);
+    }
+
     private String getMonthYear(Date date) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return localDate.getMonth().toString() + "_" + localDate.getYear();

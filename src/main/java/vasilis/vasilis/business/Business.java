@@ -3,8 +3,11 @@ package vasilis.vasilis.business;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vasilis.vasilis.invoice.Invoice;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 
@@ -53,6 +56,9 @@ public class Business {
 
     @Column (name = "comments")
     private String comments;
+
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice> invoices = new ArrayList<>();
 
 
     public Integer getId() {
@@ -165,5 +171,13 @@ public class Business {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public List<Invoice> getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
     }
 }
