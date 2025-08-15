@@ -57,7 +57,7 @@ public class Business {
     @Column (name = "comments")
     private String comments;
 
-    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<>();
 
 

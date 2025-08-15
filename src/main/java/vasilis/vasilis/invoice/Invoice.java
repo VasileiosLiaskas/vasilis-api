@@ -1,5 +1,6 @@
 package vasilis.vasilis.invoice;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import vasilis.vasilis.business.Business;
@@ -36,7 +37,8 @@ public class Invoice {
     private InvoiceEnum invoiceType;
 
     @ManyToOne
-    @JoinColumn(name = "business_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "business_id")
+    @JsonIgnore
     private Business business;
     @Lob
     @Column(name = "file_data", columnDefinition = "LONGBLOB")

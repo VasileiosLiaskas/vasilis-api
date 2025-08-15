@@ -15,5 +15,7 @@ public interface InvoiceService {
     Optional<Invoice> findById(Integer id);
     Invoice saveInvoice(MultipartFile file, String invoiceNumber, String description, Integer businessId) throws IOException;
 
-    List<InvoiceDTO> findInvoicesByArgs(InvoiceArgsDTO args);
+    List<Invoice> findInvoicesByArgs(InvoiceArgsDTO args);
+
+    List<InvoiceDTO> findInvoicesDTOByArgs(InvoiceArgsDTO args);
 }

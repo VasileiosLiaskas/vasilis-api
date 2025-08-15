@@ -1,6 +1,10 @@
 package vasilis.vasilis.invoice.DTO;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import vasilis.vasilis.general.CustomDateDeserializer;
+import vasilis.vasilis.general.CustomDateSerializer;
 import vasilis.vasilis.invoice.InvoiceEnum;
 
 import java.util.Date;
@@ -12,7 +16,11 @@ public class InvoiceDTO {
     private String fileName;
     private String invoiceNumber;
     private String description;
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date date;
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date invoiceDate;
     private InvoiceEnum invoiceType;
     private Integer businessId;

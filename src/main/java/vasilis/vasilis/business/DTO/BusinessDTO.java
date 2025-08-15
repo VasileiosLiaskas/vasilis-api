@@ -32,7 +32,7 @@ public class BusinessDTO {
     private String comments;
     private Double totalIncome;
     private Long totalRecords;
-    private List<InvoiceDTO> invoices;
+    private List<Integer> invoicesId;
 
     public BusinessDTO() {
     }
@@ -186,11 +186,11 @@ public class BusinessDTO {
         this.totalRecords = totalRecords;
     }
 
-    public List<InvoiceDTO> getInvoices() {
-        return invoices;
+    public List<Integer> getInvoicesId() {
+        return invoicesId;
     }
 
-    public void setInvoices(List<InvoiceDTO> invoices) {
-        this.invoices = invoices;
+    public void setInvoicesId(List<Integer> invoicesId) {
+        this.invoicesId = invoicesId;
     }
 }

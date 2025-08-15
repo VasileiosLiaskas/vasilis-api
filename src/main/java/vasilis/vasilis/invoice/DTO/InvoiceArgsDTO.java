@@ -58,4 +58,5 @@ public class InvoiceArgsDTO {
     public void setInvoiceType(String invoiceType) {
         this.invoiceType = invoiceType;
     }
+
 }

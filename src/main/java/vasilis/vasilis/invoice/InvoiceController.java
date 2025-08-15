@@ -36,7 +36,8 @@ public class InvoiceController {
 
     @GetMapping("/find")
     public List<InvoiceDTO> findInvoice(@ModelAttribute InvoiceArgsDTO args) {
-        return invoiceService.findInvoicesByArgs(args);
+
+        return invoiceService.findInvoicesDTOByArgs(args);
     }
 
 }

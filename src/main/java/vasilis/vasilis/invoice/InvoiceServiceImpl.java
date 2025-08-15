@@ -88,7 +88,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 predicates.add(cb.equal(root.get("invoiceNumber"), args.getInvoiceNumber()));
             }
             if (args.getBusinessId() != null) {
-                predicates.add(cb.equal(root.get("businessId"), args.getBusinessId()));
+                predicates.add(cb.equal(root.get("business").get("id"), args.getBusinessId()));
             }
             if (args.getInvoiceDate() != null) {
                 predicates.add(cb.equal(root.get("invoiceDate"), args.getInvoiceDate()));
@@ -96,8 +96,22 @@ public class InvoiceServiceImpl implements InvoiceService {
             if (args.getDateCreated() != null) {
                 predicates.add(cb.equal(root.get("dateCreated"), args.getDateCreated()));
             }
+            System.out.println("Invoice number: " + args.getInvoiceNumber());
+            System.out.println("Business ID: " + args.getBusinessId());
+            System.out.println("Invoice date: " + args.getInvoiceDate());
+            System.out.println("Date created: " + args.getDateCreated());
 
             return cb.and(predicates.toArray(new Predicate[0]));
         });
+    }
+
+    @Override
+    public List<InvoiceDTO> findInvoicesDTOByArgs(InvoiceArgsDTO args) {
+        List<Invoice> invoices = findInvoicesByArgs(args);
+        List<InvoiceDTO> dtoList = new ArrayList<>();
+        for (Invoice invoice : invoices) {
+            dtoList.add(toDTO(invoice));
+        }
+        return dtoList;
     }
 }

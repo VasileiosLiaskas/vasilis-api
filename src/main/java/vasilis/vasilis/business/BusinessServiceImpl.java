@@ -122,10 +122,10 @@ public class BusinessServiceImpl implements  BusinessService {
         // Use BeanUtils to copy properties from Business to BusinessDTO
         BeanUtils.copyProperties(business, businessDTO);
         if (business.getInvoices() != null) {
-            List<InvoiceDTO> invoiceDTOs = business.getInvoices().stream()
-                    .map(this::convertInvoiceToDTO)
+            List<Integer> invoiceIds = business.getInvoices().stream()
+                    .map(Invoice::getId) // extract ID only
                     .collect(Collectors.toList());
-            businessDTO.setInvoices(invoiceDTOs);
+            businessDTO.setInvoicesId(invoiceIds);
         }
 
         return businessDTO;
