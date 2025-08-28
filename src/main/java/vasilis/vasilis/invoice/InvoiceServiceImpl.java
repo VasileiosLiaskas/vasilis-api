@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vasilis.vasilis.business.Business;
@@ -113,5 +114,21 @@ public class InvoiceServiceImpl implements InvoiceService {
             dtoList.add(toDTO(invoice));
         }
         return dtoList;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> downloadInvoiceById(Integer id) {
+        Optional<Invoice> invoiceOpt = invoiceRepository.findById(id);
+
+        if (invoiceOpt.isEmpty() || invoiceOpt.get().getFileData() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Invoice invoice = invoiceOpt.get();
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"" + invoice.getFileName() + "\"")
+                .header("Content-Type", invoice.getFileType())
+                .body(invoice.getFileData());
     }
 }

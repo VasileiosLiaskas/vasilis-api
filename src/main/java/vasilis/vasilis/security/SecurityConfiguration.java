@@ -1,6 +1,7 @@
 package vasilis.vasilis.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -34,13 +36,17 @@ public class SecurityConfiguration {
     @Autowired
     private JwtFilter jwtFilter;
 
+    // Make allowed origins configurable via properties (defaults to localhost:4200)
+    @Value("${app.cors.allowed-origins:http://localhost:4200}")
+    private String[] allowedOrigins;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-        .authorizeHttpRequests(request-> request.requestMatchers("login").permitAll().anyRequest().authenticated())
+        .authorizeHttpRequests(request-> request.requestMatchers("/login").permitAll().anyRequest().authenticated())
         .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -51,7 +57,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200")); // ✅ Angular app
+        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

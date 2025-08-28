@@ -1,5 +1,6 @@
 package vasilis.vasilis.invoice;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import vasilis.vasilis.invoice.DTO.InvoiceArgsDTO;
 import vasilis.vasilis.invoice.DTO.InvoiceDTO;
@@ -18,4 +19,6 @@ public interface InvoiceService {
     List<Invoice> findInvoicesByArgs(InvoiceArgsDTO args);
 
     List<InvoiceDTO> findInvoicesDTOByArgs(InvoiceArgsDTO args);
+
+    ResponseEntity<byte[]> downloadInvoiceById(Integer id);
 }

@@ -40,4 +40,9 @@ public class InvoiceController {
         return invoiceService.findInvoicesDTOByArgs(args);
     }
 
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> downloadInvoice(@PathVariable Integer id) {
+        return invoiceService.downloadInvoiceById(id);
+    }
+
 }
