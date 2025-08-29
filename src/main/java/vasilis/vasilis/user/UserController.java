@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 import vasilis.vasilis.security.JwtResponse;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
             String token = userService.verify(user);
