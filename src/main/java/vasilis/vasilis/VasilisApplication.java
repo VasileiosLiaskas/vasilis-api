@@ -9,6 +9,7 @@ public class VasilisApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(VasilisApplication.class, args);
+//        fdsf
     }
     @Override
     public void run(String... args) {
