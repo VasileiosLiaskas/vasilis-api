@@ -4,6 +4,11 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +18,7 @@ import vasilis.vasilis.invoice.DTO.InvoiceArgsDTO;
 import vasilis.vasilis.invoice.DTO.InvoiceDTO;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,12 +68,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice saveInvoice(MultipartFile file, String invoiceNumber, String description, Integer businessId) throws IOException {
+    public Invoice saveInvoice(MultipartFile file, String invoiceNumber, String description, Integer businessId, Date invoiceDate) throws IOException {
 
         Invoice invoice = new Invoice();
         invoice.setInvoiceNumber(invoiceNumber);
         invoice.setDescription(description);
-        invoice.setDate(new Date());
+        invoice.setDate(invoiceDate);
 //        invoice.setInvoiceDate();
         if (businessId!=null) {
             Optional<Business> business = businessService.findById(businessId);
@@ -114,6 +120,53 @@ public class InvoiceServiceImpl implements InvoiceService {
             dtoList.add(toDTO(invoice));
         }
         return dtoList;
+    }
+
+    @Override
+    public ResponseEntity<Boolean> deleteById(Integer id) {
+        Optional<Invoice> invoiceOpt = invoiceRepository.findById(id);
+        if (invoiceOpt.isPresent()) {
+            invoiceRepository.deleteById(id);
+            return ResponseEntity.ok(true); // Successfully deleted
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false); // Not found
+        }
+    }
+
+    @Override
+    public Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceDate").descending());
+
+        Page<Invoice> invoices = invoiceRepository.findAll((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // keyword search across multiple fields
+            if (keyword != null && !keyword.isEmpty()) {
+                String likePattern = "%" + keyword.toLowerCase() + "%";
+                Predicate fileNamePredicate = cb.like(cb.lower(root.get("fileName")), likePattern);
+                Predicate invoiceNumberPredicate = cb.like(cb.lower(root.get("invoiceNumber")), likePattern);
+                Predicate descriptionPredicate = cb.like(cb.lower(root.get("description")), likePattern);
+
+                predicates.add(cb.or(fileNamePredicate, invoiceNumberPredicate, descriptionPredicate));
+            }
+
+            // dateFrom (inclusive)
+            if (dateFrom != null && !dateFrom.isEmpty()) {
+                LocalDate fromDate = LocalDate.parse(dateFrom);
+                predicates.add(cb.greaterThanOrEqualTo(root.get("invoiceDate"), fromDate));
+            }
+
+            // dateTo (inclusive)
+            if (dateTo != null && !dateTo.isEmpty()) {
+                LocalDate toDate = LocalDate.parse(dateTo);
+                predicates.add(cb.lessThanOrEqualTo(root.get("invoiceDate"), toDate));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        }, pageable);
+
+        // Map to DTO
+        return invoices.map(this::toDTO);
     }
 
     @Override
