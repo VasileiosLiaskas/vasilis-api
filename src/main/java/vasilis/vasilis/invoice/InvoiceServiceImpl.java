@@ -134,6 +134,27 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public void updateInvoice(Integer id, String fileName, String invoiceNumber, String description, Date invoiceDate) throws Exception {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new Exception("Invoice not found"));
+
+        if (invoiceNumber!=null) {
+            invoice.setInvoiceNumber(invoiceNumber);
+        }
+        if (description!=null) {
+            invoice.setDescription(description);
+        }
+        if (invoiceDate!=null){
+            invoice.setInvoiceDate(invoiceDate);
+        }
+
+        if (fileName!=null) {
+        invoice.setFileName(fileName);
+        }
+        this.invoiceRepository.save(invoice);
+    }
+
+    @Override
     public Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceDate").descending());
 

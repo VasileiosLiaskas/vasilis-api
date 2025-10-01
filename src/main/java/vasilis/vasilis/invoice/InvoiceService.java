@@ -27,4 +27,6 @@ public interface InvoiceService {
     Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo);
 
     ResponseEntity<Boolean> deleteById(Integer id);
+
+    void updateInvoice(Integer id, String fileName, String invoiceNumber, String description, Date invoiceDate) throws Exception;
 }
