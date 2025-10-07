@@ -3,6 +3,7 @@ package vasilis.vasilis.invoice;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import vasilis.vasilis.business.Business;
 import vasilis.vasilis.invoice.DTO.InvoiceArgsDTO;
 import vasilis.vasilis.invoice.DTO.InvoiceDTO;
 
@@ -24,7 +25,7 @@ public interface InvoiceService {
 
     ResponseEntity<byte[]> downloadInvoiceById(Integer id);
 
-    Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo);
+    Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo, Integer businessId);
 
     ResponseEntity<Boolean> deleteById(Integer id);
 

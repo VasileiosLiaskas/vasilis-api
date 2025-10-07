@@ -56,9 +56,10 @@ public class InvoiceController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String dateFrom,
-            @RequestParam(required = false) String dateTo
+            @RequestParam(required = false) String dateTo,
+            @RequestParam(required = false) Integer businessId
     ) {
-        return invoiceService.getList(page, size, keyword, dateFrom, dateTo);
+        return invoiceService.getList(page, size, keyword, dateFrom, dateTo, businessId);
     }
 
     @DeleteMapping("/delete/{id}")

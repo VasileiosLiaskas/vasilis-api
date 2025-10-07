@@ -19,6 +19,8 @@ import vasilis.vasilis.invoice.DTO.InvoiceDTO;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -155,7 +157,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo) {
+    public Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo, Integer businessId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceDate").descending());
 
         Page<Invoice> invoices = invoiceRepository.findAll((root, query, cb) -> {
@@ -172,15 +174,20 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
 
             // dateFrom (inclusive)
-            if (dateFrom != null && !dateFrom.isEmpty()) {
+            if (dateFrom != null) {
                 LocalDate fromDate = LocalDate.parse(dateFrom);
-                predicates.add(cb.greaterThanOrEqualTo(root.get("invoiceDate"), fromDate));
+                Date from = Date.from(fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                predicates.add(cb.greaterThanOrEqualTo(root.get("invoiceDate"), from));
             }
 
-            // dateTo (inclusive)
-            if (dateTo != null && !dateTo.isEmpty()) {
+            if (dateTo != null) {
                 LocalDate toDate = LocalDate.parse(dateTo);
-                predicates.add(cb.lessThanOrEqualTo(root.get("invoiceDate"), toDate));
+                Date to = Date.from(toDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
+                predicates.add(cb.lessThanOrEqualTo(root.get("invoiceDate"), to));
+            }
+
+            if (businessId!=null) {
+                predicates.add(cb.equal(root.get("business").get("id"), businessId));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
