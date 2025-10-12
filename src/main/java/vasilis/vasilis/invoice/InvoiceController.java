@@ -27,12 +27,13 @@ public class InvoiceController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("invoiceNumber") String invoiceNumber,
             @RequestParam("description") String description,
-            @RequestParam("businessId") Integer businessId,
+            @RequestParam(value = "businessId",required = false) Integer businessId,
+            @RequestParam("invoiceType") InvoiceEnum invoiceType,
             @RequestParam("invoiceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date invoiceDate
     ) {
         try {
 
-            invoiceService.saveInvoice(file, invoiceNumber, description, businessId, invoiceDate);
+            invoiceService.saveInvoice(file, invoiceNumber, description, businessId, invoiceDate,invoiceType);
             return ResponseEntity.ok("Invoice saved successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error saving invoice: " + e.getMessage());

@@ -70,13 +70,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice saveInvoice(MultipartFile file, String invoiceNumber, String description, Integer businessId, Date invoiceDate) throws IOException {
+    public Invoice saveInvoice(MultipartFile file, String invoiceNumber, String description, Integer businessId, Date invoiceDate, InvoiceEnum invoiceType) throws IOException {
 
         Invoice invoice = new Invoice();
         invoice.setInvoiceNumber(invoiceNumber);
         invoice.setDescription(description);
-        invoice.setDate(invoiceDate);
-//        invoice.setInvoiceDate();
+        invoice.setDate(new Date());
+        invoice.setInvoiceDate(invoiceDate);
         if (businessId!=null) {
             Optional<Business> business = businessService.findById(businessId);
             business.ifPresent(invoice::setBusiness);
@@ -84,7 +84,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setFileData(file.getBytes());
         invoice.setFileName(file.getOriginalFilename());
         invoice.setFileType(file.getContentType());
-        invoice.setInvoiceType(InvoiceEnum.FEE_INVOICE);
+        invoice.setInvoiceType(invoiceType);
         return invoiceRepository.save(invoice);
     }
 

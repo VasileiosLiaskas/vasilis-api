@@ -17,7 +17,7 @@ public interface InvoiceService {
     InvoiceDTO toDTO(Invoice invoice);
     Invoice toEntity(InvoiceDTO invoiceDTO);
     Optional<Invoice> findById(Integer id);
-    Invoice saveInvoice(MultipartFile file, String invoiceNumber, String description, Integer businessId, Date invoiceDate) throws IOException;
+    Invoice saveInvoice(MultipartFile file, String invoiceNumber, String description, Integer businessId, Date invoiceDate, InvoiceEnum InvoiceType) throws IOException;
 
     List<Invoice> findInvoicesByArgs(InvoiceArgsDTO args);
 
