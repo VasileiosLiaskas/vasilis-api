@@ -18,6 +18,9 @@ public class BusinessDTO {
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date date;
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @JsonSerialize(using = CustomDateSerializer.class)
+    private Date dateTo;
     private String type;
     private String who;
     private String area;
@@ -192,5 +195,13 @@ public class BusinessDTO {
 
     public void setInvoicesId(List<Integer> invoicesId) {
         this.invoicesId = invoicesId;
+    }
+
+    public Date getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(Date dateTo) {
+        this.dateTo = dateTo;
     }
 }

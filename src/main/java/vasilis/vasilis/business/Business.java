@@ -21,6 +21,10 @@ public class Business {
     @Column(name ="date")
     private Date date;
 
+
+    @Column(name ="date_to")
+    private Date dateTo;
+
     @Column(name = "type")
     private String type;
 
@@ -179,5 +183,13 @@ public class Business {
 
     public void setInvoices(List<Invoice> invoices) {
         this.invoices = invoices;
+    }
+
+    public Date getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(Date dateTo) {
+        this.dateTo = dateTo;
     }
 }
