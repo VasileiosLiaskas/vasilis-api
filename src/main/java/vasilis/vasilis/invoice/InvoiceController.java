@@ -74,11 +74,12 @@ public class InvoiceController {
             @RequestParam(value = "fileName", required = false) String fileName,
             @RequestParam(value = "invoiceNumber", required = false) String invoiceNumber,
             @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "invoiceType", required = false) InvoiceEnum invoiceType,
             @RequestParam("invoiceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date invoiceDate
     ) {
         try {
             // Call your service to update the invoice
-            invoiceService.updateInvoice(id, fileName, invoiceNumber, description,invoiceDate);
+            invoiceService.updateInvoice(id, fileName, invoiceNumber, description,invoiceDate, invoiceType);
             return ResponseEntity.ok("Invoice updated successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error updating invoice: " + e.getMessage());

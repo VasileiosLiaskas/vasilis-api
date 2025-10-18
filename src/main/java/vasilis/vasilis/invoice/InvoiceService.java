@@ -29,7 +29,7 @@ public interface InvoiceService {
 
     ResponseEntity<Boolean> deleteById(Integer id);
 
-    void updateInvoice(Integer id, String fileName, String invoiceNumber, String description, Date invoiceDate) throws Exception;
+    void updateInvoice(Integer id, String fileName, String invoiceNumber, String description, Date invoiceDate, InvoiceEnum invoiceType) throws Exception;
 
 
 }

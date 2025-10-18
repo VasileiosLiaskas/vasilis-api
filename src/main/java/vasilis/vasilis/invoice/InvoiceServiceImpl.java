@@ -136,7 +136,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void updateInvoice(Integer id, String fileName, String invoiceNumber, String description, Date invoiceDate) throws Exception {
+    public void updateInvoice(Integer id, String fileName, String invoiceNumber, String description, Date invoiceDate, InvoiceEnum invoiceType) throws Exception {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new Exception("Invoice not found"));
 
@@ -145,6 +145,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         if (description!=null) {
             invoice.setDescription(description);
+        }
+        if (invoiceType!=null) {
+            invoice.setInvoiceType(invoiceType);
         }
         if (invoiceDate!=null){
             invoice.setInvoiceDate(invoiceDate);
