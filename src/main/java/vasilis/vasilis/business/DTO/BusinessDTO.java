@@ -37,6 +37,8 @@ public class BusinessDTO {
     private Long totalRecords;
     private List<Integer> invoicesId;
 
+    private String googleCalendarId;
+
     public BusinessDTO() {
     }
 
@@ -203,5 +205,13 @@ public class BusinessDTO {
 
     public void setDateTo(Date dateTo) {
         this.dateTo = dateTo;
+    }
+
+    public String getGoogleCalendarId() {
+        return googleCalendarId;
+    }
+
+    public void setGoogleCalendarId(String googleCalendarId) {
+        this.googleCalendarId = googleCalendarId;
     }
 }

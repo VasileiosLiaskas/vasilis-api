@@ -92,8 +92,8 @@ public class BusinessServiceImpl implements  BusinessService {
 
     @Override
     @Transactional
-    public void saveBusiness(BusinessDTO businessDTO) {
-        businessRepository.save(toEntity(businessDTO));
+    public BusinessDTO saveBusiness(BusinessDTO businessDTO) {
+        return toDTO(businessRepository.save(toEntity(businessDTO)));
     }
 
     @Override
@@ -239,4 +239,12 @@ public class BusinessServiceImpl implements  BusinessService {
         }
     }
 
+    @Override
+    public boolean updateGoogleCalendarId(Integer id, String calendarId) {
+        return businessRepository.findById(id).map(business -> {
+            business.setGoogleCalendarId(calendarId);
+            businessRepository.save(business);
+            return true;
+        }).orElse(false);
+    }
 }

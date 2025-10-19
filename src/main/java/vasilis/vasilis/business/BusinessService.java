@@ -17,7 +17,7 @@ public interface BusinessService {
 
     boolean deleteBusinessById(Integer id);
 
-    void saveBusiness(BusinessDTO businessDTO);
+    BusinessDTO saveBusiness(BusinessDTO businessDTO);
 
     Business toEntity(BusinessDTO businessDTO);
 
@@ -30,6 +30,8 @@ public interface BusinessService {
     ResponseEntity<byte[]> export();
 
     Business getById(Integer businessId);
+
+    boolean updateGoogleCalendarId(Integer id, String calendarId);
 
 //    List<BusinessDTO> searchBusiness(BusinessArgsDTO businessArgsDTO);
 }

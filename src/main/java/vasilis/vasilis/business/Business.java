@@ -64,6 +64,9 @@ public class Business {
     @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<>();
 
+    @Column(name="google_calendar_id")
+    private String googleCalendarId;
+
 
     public Integer getId() {
         return id;
@@ -191,5 +194,13 @@ public class Business {
 
     public void setDateTo(Date dateTo) {
         this.dateTo = dateTo;
+    }
+
+    public String getGoogleCalendarId() {
+        return googleCalendarId;
+    }
+
+    public void setGoogleCalendarId(String googleCalendarId) {
+        this.googleCalendarId = googleCalendarId;
     }
 }

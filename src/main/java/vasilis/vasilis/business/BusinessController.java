@@ -21,8 +21,8 @@ public class BusinessController {
 
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public void saveBusiness(@RequestBody BusinessDTO businessDTO) {
-        businessService.saveBusiness(businessDTO);
+    public BusinessDTO saveBusiness(@RequestBody BusinessDTO businessDTO) {
+        return businessService.saveBusiness(businessDTO);
 
     }
 //
@@ -60,5 +60,18 @@ public class BusinessController {
         return businessService.export();
     }
 
+    @PatchMapping("/{id}/google-calendar")
+    public ResponseEntity<Void> updateGoogleCalendarId(
+            @PathVariable Integer id,
+            @RequestParam("googleCalendarId") String calendarId) {
+
+        boolean updated = businessService.updateGoogleCalendarId(id, calendarId);
+
+        if (updated) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
 }
