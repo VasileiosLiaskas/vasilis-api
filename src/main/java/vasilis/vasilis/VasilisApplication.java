@@ -4,6 +4,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
 @SpringBootApplication
 public class VasilisApplication implements CommandLineRunner {
 
@@ -12,7 +17,11 @@ public class VasilisApplication implements CommandLineRunner {
 //        fdsf
     }
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws NoSuchAlgorithmException {
+        KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+        SecretKey key = keyGen.generateKey();
+        String base64Key = Base64.getEncoder().encodeToString(key.getEncoded());
+        System.out.println("Your secret key: " + base64Key);
         System.out.println("---- ENV VAR DEBUG ----");
         System.out.println("MYSQLHOST=" + System.getenv("MYSQLHOST"));
         System.out.println("MYSQLUSER=" + System.getenv("MYSQLUSER"));
