@@ -13,7 +13,7 @@ public interface BusinessService {
 
     Optional<Business> findById(Integer id);
 
-    Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo,  Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout);
+    List<BusinessDTO> getList();
 
     boolean deleteBusinessById(Integer id);
 
@@ -29,7 +29,7 @@ public interface BusinessService {
 
     ResponseEntity<byte[]> export();
 
-    Business getById(Integer businessId);
+    Optional<Business> getById(Integer businessId);
 
     boolean updateGoogleCalendarId(Integer id, String calendarId);
 

@@ -57,9 +57,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         BeanUtils.copyProperties(invoiceDTO, invoice);
         if (invoiceDTO.getBusinessId() != null) {
-            Business business = businessService.getById(invoiceDTO.getBusinessId());
-            invoice.setBusiness(business);
-
+            Optional<Business> business = businessService.getById(invoiceDTO.getBusinessId());
+            business.ifPresent(invoice::setBusiness);
         }
         return invoice;
     }

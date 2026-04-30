@@ -51,44 +51,20 @@ public class BusinessServiceImpl implements  BusinessService {
         return businessRepository.findById(id);
     }
 
-    public Page<BusinessDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo,
-                                     Boolean filterFilesDelivered, Boolean filterFilesCompleted, Boolean filterPayout) {
-        Pageable pageable = PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "date"));
-        if ((keyword == null || keyword.trim().isEmpty())&&(dateFrom == null || dateTo == null )
-                && filterFilesDelivered == null && filterFilesCompleted == null && filterPayout == null ) {
-            // If keyword is empty or null, use the simple findAll with pagination and sorting
-            Page<Business> businessPage = businessRepository.findAll(pageable);
-            Page<BusinessDTO> dtoPage = businessPage.map(this::toDTO);
-
-            Long totalRecords = businessPage.getTotalElements();
-            // Calculate totalIncome for current month
-            Double totalIncome = getTotalIncomeForCurrentMonth();
-
-            // Set totalIncome in each DTO
-            dtoPage.forEach(dto -> dto.setTotalIncome(totalIncome));
-
-            return dtoPage;
-        } else {
-            Date fromDate = parseDate(dateFrom);
-            Date toDate = parseDate(dateTo);
-            return searchBusinessByKeyword(page, size, keyword,fromDate, toDate,filterFilesDelivered, filterFilesCompleted, filterPayout);
-        }
-    }
-
-    private Double getTotalIncomeForCurrentMonth() {
-        return businessRepository.getTotalIncomeForCurrentMonth();
+    @Override
+    public List<BusinessDTO> getList() {
+        return toDTOList(businessRepository.findAll());
     }
 
     @Override
-    @Transactional
     public boolean deleteBusinessById(Integer id) {
-        businessRepository.deleteById(id);
-        // Check if the business exists first
-        Optional<Business> business = businessRepository.findById(id);
-
-        return business.isEmpty();
-
+        if (businessRepository.existsById(id)) {
+            businessRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
+
 
     @Override
     @Transactional
@@ -201,8 +177,8 @@ public class BusinessServiceImpl implements  BusinessService {
     }
 
     @Override
-    public Business getById(Integer businessId) {
-        return businessRepository.getById(businessId);
+    public Optional<Business> getById(Integer businessId) {
+        return businessRepository.findById(businessId);
     }
 
     private String getMonthYear(Date date) {
