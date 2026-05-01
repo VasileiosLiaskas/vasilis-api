@@ -4,9 +4,6 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +15,6 @@ import vasilis.vasilis.invoice.DTO.InvoiceArgsDTO;
 import vasilis.vasilis.invoice.DTO.InvoiceDTO;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -159,44 +153,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Page<InvoiceDTO> getList(int page, int size, String keyword, String dateFrom, String dateTo, Integer businessId) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceDate").descending());
-
-        Page<Invoice> invoices = invoiceRepository.findAll((root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            // keyword search across multiple fields
-            if (keyword != null && !keyword.isEmpty()) {
-                String likePattern = "%" + keyword.toLowerCase() + "%";
-                Predicate fileNamePredicate = cb.like(cb.lower(root.get("fileName")), likePattern);
-                Predicate invoiceNumberPredicate = cb.like(cb.lower(root.get("invoiceNumber")), likePattern);
-                Predicate descriptionPredicate = cb.like(cb.lower(root.get("description")), likePattern);
-
-                predicates.add(cb.or(fileNamePredicate, invoiceNumberPredicate, descriptionPredicate));
-            }
-
-            // dateFrom (inclusive)
-            if (dateFrom != null) {
-                LocalDate fromDate = LocalDate.parse(dateFrom);
-                Date from = Date.from(fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                predicates.add(cb.greaterThanOrEqualTo(root.get("invoiceDate"), from));
-            }
-
-            if (dateTo != null) {
-                LocalDate toDate = LocalDate.parse(dateTo);
-                Date to = Date.from(toDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
-                predicates.add(cb.lessThanOrEqualTo(root.get("invoiceDate"), to));
-            }
-
-            if (businessId!=null) {
-                predicates.add(cb.equal(root.get("business").get("id"), businessId));
-            }
-
-            return cb.and(predicates.toArray(new Predicate[0]));
-        }, pageable);
-
-        // Map to DTO
-        return invoices.map(this::toDTO);
+    public List<InvoiceDTO> getList() {
+        return invoiceRepository.findAll(Sort.by("invoiceDate").descending())
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     @Override

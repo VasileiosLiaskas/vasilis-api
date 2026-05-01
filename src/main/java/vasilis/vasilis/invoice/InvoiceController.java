@@ -2,12 +2,10 @@ package vasilis.vasilis.invoice;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vasilis.vasilis.business.DTO.BusinessDTO;
 import vasilis.vasilis.invoice.DTO.InvoiceArgsDTO;
 import vasilis.vasilis.invoice.DTO.InvoiceDTO;
 
@@ -29,7 +27,7 @@ public class InvoiceController {
             @RequestParam("description") String description,
             @RequestParam(value = "businessId",required = false) Integer businessId,
             @RequestParam("invoiceType") InvoiceEnum invoiceType,
-            @RequestParam("invoiceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date invoiceDate
+            @RequestParam("invoiceDate") @DateTimeFormat(pattern = "dd-MM-yyyy") Date invoiceDate
     ) {
         try {
 
@@ -52,15 +50,8 @@ public class InvoiceController {
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public Page<InvoiceDTO> getList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String dateFrom,
-            @RequestParam(required = false) String dateTo,
-            @RequestParam(required = false) Integer businessId
-    ) {
-        return invoiceService.getList(page, size, keyword, dateFrom, dateTo, businessId);
+    public List<InvoiceDTO> getList() {
+        return invoiceService.getList();
     }
 
     @DeleteMapping("/delete/{id}")
@@ -75,7 +66,7 @@ public class InvoiceController {
             @RequestParam(value = "invoiceNumber", required = false) String invoiceNumber,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "invoiceType", required = false) InvoiceEnum invoiceType,
-            @RequestParam("invoiceDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date invoiceDate
+            @RequestParam("invoiceDate") @DateTimeFormat(pattern = "dd-MM-yyyy") Date invoiceDate
     ) {
         try {
             // Call your service to update the invoice

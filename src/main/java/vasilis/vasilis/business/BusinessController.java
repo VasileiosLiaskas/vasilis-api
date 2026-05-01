@@ -31,20 +31,6 @@ public class BusinessController {
         return businessService.getList();
     }
 
-   /* @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public Page<BusinessDTO> getList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String dateFrom,
-            @RequestParam(required = false) String dateTo,
-            @RequestParam(required = false) Boolean filterFilesDelivered,
-            @RequestParam(required = false) Boolean filterFilesCompleted,
-            @RequestParam(required = false) Boolean filterPayout
-            ) {
-        return businessService.getList(page, size,keyword, dateFrom, dateTo, filterFilesDelivered, filterFilesCompleted, filterPayout);
-    }*/
-
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Void> deleteBusiness(@PathVariable Integer id) {
         boolean deleted = businessService.deleteBusinessById(id);
