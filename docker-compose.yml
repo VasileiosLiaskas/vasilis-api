@@ -1,0 +1,45 @@
+services:
+
+  db:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQLDATABASE}
+      MYSQL_USER: ${MYSQLUSER}
+      MYSQL_PASSWORD: ${MYSQLPASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQLPASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - appnet
+
+  spring:
+    build: ./vasilis-api
+    container_name: spring
+    restart: always
+    depends_on:
+      - db
+    environment:
+      MYSQLHOST: db
+      MYSQLPORT: ${MYSQLPORT}
+      MYSQLDATABASE: ${MYSQLDATABASE}
+      MYSQLUSER: ${MYSQLUSER}
+      MYSQLPASSWORD: ${MYSQLPASSWORD}
+    networks:
+      - appnet
+
+  angular:
+    build: ./vasilis
+    container_name: angular
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - appnet
+
+volumes:
+  mysql_data:
+
+networks:
+  appnet:
