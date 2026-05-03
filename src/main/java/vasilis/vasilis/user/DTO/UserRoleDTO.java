@@ -1,0 +1,11 @@
+package vasilis.vasilis.user.DTO;
+
+import lombok.Data;
+import vasilis.vasilis.user.Role;
+
+@Data
+public class UserRoleDTO {
+    private Integer id;
+    private String username;
+    private Role role;
+}
