@@ -27,7 +27,7 @@ jobs:
           script_stop: true
           script: |
             set -e
-            cd "${{ secrets.HETZNER_APP_PATH }}"
+            cd /opt/vasilis-api
 
             git fetch origin
             git checkout refactor
