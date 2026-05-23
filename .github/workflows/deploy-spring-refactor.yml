@@ -33,7 +33,7 @@ jobs:
             git checkout refactor
             git pull origin refactor
 
-            docker compose up -d --build spring
-            docker compose ps spring
+            docker-compose up -d --build spring
+            docker-compose ps spring
 
 
