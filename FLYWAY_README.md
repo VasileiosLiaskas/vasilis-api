@@ -11,9 +11,13 @@ This project now uses Flyway to apply SQL schema migrations at startup.
 
 ## Current migration
 
-- `V1__init_schema.sql`
+nd - `V1__init_schema.sql`
   - Creates `users`, `business`, `invoice`, and `comment` tables
   - Adds foreign keys for `invoice.business_id` and `comment.author_id`
+- `V2__add_field_type_in_parametric_table.sql`
+  - Adds nullable `type` (`VARCHAR(100)`) to `parametric_values`
+- `V3__set_parametric_values_id_auto_increment.sql`
+  - Sets `parametric_values.id` to `BIGINT NOT NULL AUTO_INCREMENT`
 
 ## Existing database behavior
 
