@@ -27,13 +27,14 @@ jobs:
           script_stop: true
           script: |
             set -e
-            cd /opt/vasilis-api
-
-            git fetch origin
-            git checkout refactor
-            git pull origin refactor
-
-            docker-compose up -d --build spring
-            docker-compose ps spring
+             cd /opt/vasilis-api
+            
+             git fetch origin
+             git checkout refactor
+             git pull origin refactor
+            
+             cd /opt
+             docker-compose up -d --build spring
+             docker-compose ps spring
 
 
