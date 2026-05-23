@@ -25,8 +25,6 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    // ...existing code...
-
     public Role getRole() {
         return role;
     }
