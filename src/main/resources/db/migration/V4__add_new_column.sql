@@ -1,0 +1,2 @@
+ALTER TABLE business ADD COLUMN from_who VARCHAR(255) NULL;
+

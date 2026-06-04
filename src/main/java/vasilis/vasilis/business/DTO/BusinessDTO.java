@@ -23,6 +23,7 @@ public class BusinessDTO {
     private Date dateTo;
     private String type;
     private String who;
+    private String fromWho;
     private String area;
     private String details;
     private Double fee;
@@ -42,25 +43,6 @@ public class BusinessDTO {
     public BusinessDTO() {
     }
 
-    public BusinessDTO(Integer id, String type, String who, String area,
-                       String details, Date date, String comments,
-                       Double fee, Double advancePayment, Double remainingMoney,
-                       Boolean payout, Boolean filesCompleted, Boolean filesDelivered, Double costs) {
-        this.id = id;
-        this.type = type;
-        this.who = who;
-        this.area = area;
-        this.details = details;
-        this.date = date;
-        this.comments = comments;
-        this.fee = fee;
-        this.advancePayment = advancePayment;
-        this.remainingMoney = remainingMoney;
-        this.payout = payout;
-        this.filesCompleted = filesCompleted;
-        this.filesDelivered = filesDelivered;
-        this.costs=costs;
-    }
 
     public Integer getId() {
         return id;
@@ -213,5 +195,13 @@ public class BusinessDTO {
 
     public void setGoogleCalendarId(String googleCalendarId) {
         this.googleCalendarId = googleCalendarId;
+    }
+
+    public String getFromWho() {
+        return fromWho;
+    }
+
+    public void setFromWho(String fromWho) {
+        this.fromWho = fromWho;
     }
 }

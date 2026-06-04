@@ -29,7 +29,9 @@ public class Business {
     private String type;
 
     @Column(name = "who")
-        private String who;
+    private String who;
+    @Column(name = "from_who")
+    private String fromWho;
 
     @Column (name = "area")
     private String area;
@@ -67,6 +69,13 @@ public class Business {
     @Column(name="google_calendar_id")
     private String googleCalendarId;
 
+    public String getFromWho() {
+        return fromWho;
+    }
+
+    public void setFromWho(String fromWho) {
+        this.fromWho = fromWho;
+    }
 
     public Integer getId() {
         return id;
@@ -203,4 +212,6 @@ public class Business {
     public void setGoogleCalendarId(String googleCalendarId) {
         this.googleCalendarId = googleCalendarId;
     }
+
+
 }
