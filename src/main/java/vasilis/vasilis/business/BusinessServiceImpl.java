@@ -53,7 +53,7 @@ public class BusinessServiceImpl implements  BusinessService {
 
     @Override
     public List<BusinessDTO> getList() {
-        return toDTOList(businessRepository.findAll());
+        return toDTOList(businessRepository.findAll(Sort.by(Sort.Direction.DESC, "date")));
     }
 
     @Override
