@@ -46,9 +46,13 @@ public class SecurityConfiguration {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-        .authorizeHttpRequests(request-> request.requestMatchers("/user/login").permitAll().anyRequest().authenticated())
-        .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/user/login", "/", "/index.html", "/*.js", "/*.css", "/assets/**", "/favicon.ico").permitAll()
+                        .anyRequest().authenticated()
+                );
+
+        http.httpBasic(httpBasic -> httpBasic.disable());
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
