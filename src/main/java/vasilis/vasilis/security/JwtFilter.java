@@ -16,6 +16,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import vasilis.vasilis.user.JWTService;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -25,9 +28,14 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     ApplicationContext applicationContext;
 
+    private final List<String> publicEndpoints = List.of("/user/login");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (publicEndpoints.stream().anyMatch(p -> request.getRequestURI().equals(p))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String authHeader = request.getHeader("Authorization");
         String token =null;
         String username=null;
