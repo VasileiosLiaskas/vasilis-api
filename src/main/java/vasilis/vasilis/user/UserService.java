@@ -18,4 +18,6 @@ public interface UserService {
     void changeUserRole(String username, Role role);
 
     Role getUserRole(String username);
+
+    User createUser(String username, String password, Role role);
 }

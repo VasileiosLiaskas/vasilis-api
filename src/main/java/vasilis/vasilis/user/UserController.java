@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import vasilis.vasilis.security.JwtResponse;
 import vasilis.vasilis.user.DTO.ChangeRoleRequest;
 import vasilis.vasilis.user.DTO.ChangeUsernameRequest;
+import vasilis.vasilis.user.DTO.CreateUserRequest;
 import vasilis.vasilis.user.DTO.UserRoleDTO;
 
 import java.util.Map;
@@ -100,6 +101,47 @@ public class UserController {
             return ResponseEntity.ok("User role updated successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating user role: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUsername = authentication.getName();
+
+            // Check if current user is admin
+            Role currentUserRole = userService.getUserRole(currentUsername);
+            if (!Role.ADMIN.equals(currentUserRole)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Access denied. Only administrators can create users.");
+            }
+
+            // Validate request
+            if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is required");
+            }
+            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required");
+            }
+            if (request.getRole() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Role is required");
+            }
+
+            User newUser = userService.createUser(
+                request.getUsername(),
+                request.getPassword(),
+                request.getRole()
+            );
+
+            UserRoleDTO response = new UserRoleDTO();
+            response.setId(newUser.getId());
+            response.setUsername(newUser.getUsername());
+            response.setRole(newUser.getRole());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating user: " + e.getMessage());
         }
     }
 }
