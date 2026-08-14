@@ -1,0 +1,1 @@
+ALTER TABLE invoice MODIFY COLUMN file_type VARCHAR(512);

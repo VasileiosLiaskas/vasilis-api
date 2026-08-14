@@ -23,11 +23,11 @@ public class InvoiceController {
     @PostMapping("/save")
     public ResponseEntity<String> saveInvoice(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("invoiceNumber") String invoiceNumber,
+            @RequestParam(value = "invoiceNumber", required = false) String invoiceNumber,
             @RequestParam("description") String description,
             @RequestParam(value = "businessId",required = false) Integer businessId,
             @RequestParam("invoiceType") InvoiceEnum invoiceType,
-            @RequestParam("invoiceDate") @DateTimeFormat(pattern = "dd-MM-yyyy") Date invoiceDate
+            @RequestParam(value = "invoiceDate", required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date invoiceDate
     ) {
         try {
 
@@ -66,7 +66,7 @@ public class InvoiceController {
             @RequestParam(value = "invoiceNumber", required = false) String invoiceNumber,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "invoiceType", required = false) InvoiceEnum invoiceType,
-            @RequestParam("invoiceDate") @DateTimeFormat(pattern = "dd-MM-yyyy") Date invoiceDate
+            @RequestParam(value = "invoiceDate", required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date invoiceDate
     ) {
         try {
             // Call your service to update the invoice
