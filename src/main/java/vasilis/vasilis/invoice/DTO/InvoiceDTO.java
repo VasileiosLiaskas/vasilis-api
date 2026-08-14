@@ -24,6 +24,7 @@ public class InvoiceDTO {
     private Date invoiceDate;
     private InvoiceEnum invoiceType;
     private Integer businessId;
+    private String businessDate;
     private String fileData;
 
     private String fileType;
@@ -106,5 +107,13 @@ public class InvoiceDTO {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public String getBusinessDate() {
+        return businessDate;
+    }
+
+    public void setBusinessDate(String businessDate) {
+        this.businessDate = businessDate;
     }
 }

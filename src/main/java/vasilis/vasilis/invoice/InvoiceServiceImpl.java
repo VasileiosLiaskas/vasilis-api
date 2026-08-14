@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -40,6 +44,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getBusiness()!=null){
             dto.setBusinessId(invoice.getBusiness().getId());
         }
+        if (invoice.getBusiness()!=null && invoice.getBusiness().getDate() != null){
+            Date bizDate = invoice.getBusiness().getDate();
+            LocalDate local = Instant.ofEpochMilli(bizDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+            String ddMMyy = local.format(DateTimeFormatter.ofPattern("ddMMyy"));
+            dto.setBusinessDate(ddMMyy);
+        }
+
         return dto;
 
     }
